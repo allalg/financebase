@@ -50,7 +50,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # PowerShell example: $env:GROQ_API_KEY="gsk_your_key_here"
 API_KEY = os.environ.get("GROQ_API_KEY", "").strip() or _load_dotenv_key(BASE_DIR)
 
-PORT = 8080
+# Render.com sets PORT automatically — fallback to 8080 for local dev
+PORT = int(os.environ.get("PORT", 8080))
 MODEL = "llama-3.3-70b-versatile"
 
 SYSTEM_PROMPT = """You are FinanceBase Tutor — a warm, encouraging finance teacher for students aged 15-22.
@@ -175,7 +176,8 @@ if __name__ == "__main__":
         print(f"  API key loaded: {API_KEY[:8]}...")
         print(f"  Model: {MODEL}")
     print("="*50)
-    server = HTTPServer(("localhost", PORT), Handler)
+    HOST = "0.0.0.0"  # Must be 0.0.0.0 for Render (not localhost)
+    server = HTTPServer((HOST, PORT), Handler)
     print(f"  FinanceBase running at http://localhost:{PORT}")
     print("  Press Ctrl+C to stop\n")
     try:
