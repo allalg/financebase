@@ -579,9 +579,14 @@ function escHtml(t) {
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+// Auto-detect: use same origin on Render, localhost for local dev
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:8080'
+  : window.location.origin;
+
 async function checkServer() {
   try {
-    const res = await fetch('http://localhost:8080/', { method: 'GET' });
+    const res = await fetch(API_BASE + '/', { method: 'GET' });
     return res.ok;
   } catch (e) {
     return false;
@@ -604,7 +609,7 @@ async function sendMessage() {
   try {
     let res;
     try {
-      res = await fetch('http://localhost:8080/chat', {
+      res = await fetch(API_BASE + '/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: chatHistory })
